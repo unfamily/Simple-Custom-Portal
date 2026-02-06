@@ -1,0 +1,5 @@
+{
+  "itemGroup.simp_cm_portal.main": "Simple Custom Portal",
+  "message.simp_cm_portal.invalid_portal_position": "Invalid position for portal",
+  "message.simp_cm_portal.reload_success": "Portal definitions reloaded"
+}
