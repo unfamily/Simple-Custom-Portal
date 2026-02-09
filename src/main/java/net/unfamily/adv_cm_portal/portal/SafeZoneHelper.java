@@ -48,7 +48,14 @@ public final class SafeZoneHelper {
         int x = originPortalPos.getX();
         int y = originPortalPos.getY();
         int z = originPortalPos.getZ();
+        int baseY = y - 1;
         BlockPos center = new BlockPos(x, y, z);
+
+        // If a portal already exists at the same position (e.g. player placed it), use it without building
+        if (destLevel.getBlockState(center).getBlock() instanceof PortalBlock) {
+            player.teleportTo(destLevel, center.getX() + 0.5, center.getY() + 1, center.getZ() + 0.5, player.getYRot(), player.getXRot());
+            return;
+        }
 
         BlockPos existing = findReturnPortal(destLevel, center, originDimension);
         if (existing != null) {
@@ -56,7 +63,7 @@ public final class SafeZoneHelper {
             return;
         }
 
-        if (!isZoneSafeForPortal(destLevel, x, y, z)) {
+        if (!isZoneSafeForPortal(destLevel, x, baseY, z)) {
             player.displayClientMessage(Component.translatable("message.simp_cm_portal.invalid_portal_position"), true);
             return;
         }
@@ -67,7 +74,7 @@ public final class SafeZoneHelper {
         for (int dx = -OUTER_RAD; dx <= OUTER_RAD; dx++) {
             for (int dz = -OUTER_RAD; dz <= OUTER_RAD; dz++) {
                 for (int dy = 0; dy < TOTAL_HEIGHT; dy++) {
-                    destLevel.setBlock(new BlockPos(x + dx, y + dy, z + dz), Blocks.AIR.defaultBlockState(), 3);
+                    destLevel.setBlock(new BlockPos(x + dx, baseY + dy, z + dz), Blocks.AIR.defaultBlockState(), 3);
                 }
             }
         }
@@ -75,7 +82,7 @@ public final class SafeZoneHelper {
         if (baseBlock != null) {
             for (int dx = -OUTER_RAD; dx <= OUTER_RAD; dx++) {
                 for (int dz = -OUTER_RAD; dz <= OUTER_RAD; dz++) {
-                    destLevel.setBlock(new BlockPos(x + dx, y, z + dz), baseBlock.defaultBlockState(), 3);
+                    destLevel.setBlock(new BlockPos(x + dx, baseY, z + dz), baseBlock.defaultBlockState(), 3);
                 }
             }
         }
@@ -87,14 +94,14 @@ public final class SafeZoneHelper {
                         boolean isWall = (dx == -OUTER_RAD || dx == OUTER_RAD || dz == -OUTER_RAD || dz == OUTER_RAD);
                         boolean isCeiling = (dy == TOTAL_HEIGHT - 1);
                         if (isWall || isCeiling) {
-                            destLevel.setBlock(new BlockPos(x + dx, y + dy, z + dz), capsuleBlock.defaultBlockState(), 3);
+                            destLevel.setBlock(new BlockPos(x + dx, baseY + dy, z + dz), capsuleBlock.defaultBlockState(), 3);
                         }
                     }
                 }
             }
         }
 
-        BlockPos portalPos = new BlockPos(x, y + 1, z);
+        BlockPos portalPos = new BlockPos(x, baseY + 1, z);
         PortalBlock portalBlock = ModBlocks.getPortalBlockById(definition.id());
         if (portalBlock != null) {
             destLevel.setBlock(portalPos, portalBlock.defaultBlockState(), 3);

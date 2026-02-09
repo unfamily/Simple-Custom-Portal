@@ -96,6 +96,13 @@ public final class PortalLoader {
             - **box** (optional): hitbox (collision and visual) as a variable-size box centered in the block. Format: `"width height depth"` as fractions from 0 to 1, space or comma separated. Example: `"1 1 1"` or omit = full block; `"0.5 1 0.5"` = half width and depth, full height (thin pillar); `"0.5"` = cube 0.5×0.5×0.5. Invalid or empty = full block.
             - **usableIn** (optional): array of dimension keys. If non-empty, the portal can only be used when the player is in one of these dimensions. Applies to both normal and return portals — use this for one-way portals (e.g. only `["minecraft:overworld"]` so the return portal in the destination does not work).
             - **defaultReturn** (optional): when the player is already in **destination** and uses a portal without a stored return (e.g. a manually placed block), they are sent to this dimension. If empty, using the portal from the destination does nothing (no second portal is created elsewhere).
+            - **sound** (optional): block sound type for the portal block (place, break, step). Default is `glass`. See "Supported sounds" below. Example: `"rock"`.
+
+            ### Supported sounds
+
+            Valid values for **sound** (use exactly as written; default if omitted or unknown: `glass`):
+
+            `rock`, `stone`, `glass`, `wood`, `metal`, `iron`, `wool`, `sand`, `gravel`, `grass`, `lily_pad`, `snow`, `powder_snow`, `ladder`, `anvil`, `slime_block`, `honey_block`, `coral_block`, `bamboo`, `bamboo_sapling`, `scaffolding`, `sweet_berry_bush`, `crop`, `hard_crop`, `vine`, `nether_wart`, `lantern`, `stem`, `nylium`, `fungus`, `roots`, `shroomlight`, `weeping_vines`, `twisting_vines`, `soul_sand`, `soul_soil`, `basalt`, `wart_block`, `netherrack`, `nether_bricks`, `nether_sprouts`, `nether_ore`, `bone_block`, `netherite_block`, `ancient_debris`, `lodestone`, `chain`, `nether_gold_ore`, `gilded_blackstone`, `candle`, `amethyst`, `amethyst_cluster`, `small_amethyst_bud`, `medium_amethyst_bud`, `large_amethyst_bud`, `tuff`, `calcite`, `dripstone_block`, `pointed_dripstone`, `copper`, `cave_vines`, `spore_blossom`, `azalea`, `flowering_azalea`, `moss_carpet`, `pink_petals`, `moss`, `big_dripleaf`, `small_dripleaf`, `rooted_dirt`, `hanging_roots`, `azalea_leaves`, `sculk_sensor`, `sculk_catalyst`, `sculk`, `sculk_vein`, `sculk_shrieker`, `glow_lichen`, `deepslate`, `deepslate_bricks`, `deepslate_tiles`, `polished_deepslate`, `froglight`, `frogspawn`, `mangrove_roots`, `muddy_mangrove_roots`, `mud`, `mud_bricks`, `packed_mud`, `hanging_sign`, `nether_wood_hanging_sign`, `bamboo_wood_hanging_sign`, `bamboo_wood`, `nether_wood`, `cherry_wood`, `cherry_sapling`, `cherry_leaves`, `cherry_wood_hanging_sign`, `chiseled_bookshelf`, `suspicious_sand`, `suspicious_gravel`, `decorated_pot`, `decorated_pot_cracked`
 
             JSON can contain `//` and `/* */` comments; they are stripped before parsing.
 
@@ -114,7 +121,7 @@ public final class PortalLoader {
             }
             ```
 
-            **Two-way with safe-zone and default return (e.g. overworld ↔ void):**
+            **Two-way with safe-zone, default return and custom sound (e.g. overworld ↔ void):**
             ```json
             {
               "type": "simp_cm_portal:portals",
@@ -124,6 +131,7 @@ public final class PortalLoader {
                   "destination": "custom_dimensions:void",
                   "baseBlock": "minecraft:stone",
                   "capsuleBlock": "minecraft:glass",
+                  "sound": "rock",
                   "usableIn": [],
                   "defaultReturn": "minecraft:overworld"
                 }
@@ -250,7 +258,8 @@ public final class PortalLoader {
                     getString(o, "capsuleBlock"),
                     getString(o, "box"),
                     usableIn,
-                    getString(o, "defaultReturn")
+                    getString(o, "defaultReturn"),
+                    getString(o, "sound")
                 ));
             }
         } catch (JsonParseException e) {
